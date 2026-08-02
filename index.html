@@ -1,0 +1,763 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>CULT — Budget Management</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <link rel="stylesheet" href="styles.css"/>
+</head>
+<body>
+
+<!-- ═══════ AUTH SCREEN ═══════ -->
+<div id="auth-screen" class="auth-screen">
+  <div class="auth-wrap">
+    <div class="auth-left">
+      <div class="auth-brand">
+        <div class="brand-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><rect x="2" y="5" width="20" height="14" rx="2" stroke="white" stroke-width="2"/><path d="M2 10h20" stroke="white" stroke-width="2"/><circle cx="6" cy="15" r="1.5" fill="white"/></svg>
+        </div>
+        <span>CULT</span>
+      </div>
+      <p class="auth-tagline">Join <strong>CULT</strong> and take full control of your project budgets with real-time analytics.</p>
+      <div class="auth-chart-preview">
+        <div class="preview-bar" style="height:40px;animation-delay:.1s"></div>
+        <div class="preview-bar" style="height:68px;animation-delay:.2s"></div>
+        <div class="preview-bar" style="height:52px;animation-delay:.3s"></div>
+        <div class="preview-bar active" style="height:90px;animation-delay:.4s"></div>
+      </div>
+    </div>
+    <div class="auth-right">
+      <!-- SIGN UP FORM -->
+      <div id="signup-form" class="auth-form active-form">
+        <h1>Create an Account</h1>
+        <p class="auth-subtitle">Start your 14-day free trial today.</p>
+        <div class="form-group">
+          <label>Full Name</label>
+          <input type="text" id="signup-name" placeholder="John Doe"/>
+        </div>
+        <div class="form-group">
+          <label>Email Address</label>
+          <div class="input-icon-wrap">
+            <input type="email" id="signup-email" placeholder="you@example.com" oninput="validateEmail(this)"/>
+            <span class="input-valid-icon" id="email-valid-icon"></span>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Password</label>
+          <input type="password" id="signup-password" placeholder="••••••••" oninput="checkStrength(this.value)"/>
+          <div class="pass-strength-bars">
+            <div class="s-bar" id="sb1"></div><div class="s-bar" id="sb2"></div>
+            <div class="s-bar" id="sb3"></div><div class="s-bar" id="sb4"></div>
+          </div>
+          <span class="strength-text" id="strength-text"></span>
+        </div>
+        <div class="form-group">
+          <label>Confirm Password</label>
+          <input type="password" id="signup-confirm" placeholder="••••••••"/>
+        </div>
+        <button class="btn-primary btn-full" onclick="handleSignup()">Sign Up</button>
+        <div class="auth-divider"><span>Or sign up with</span></div>
+        <div class="social-row">
+          <button class="btn-social" onclick="showToast('Google sign-up coming soon!')">
+            <svg width="17" height="17" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+            Google
+          </button>
+          <button class="btn-social" onclick="showToast('Microsoft sign-up coming soon!')">
+            <svg width="17" height="17" viewBox="0 0 24 24"><path fill="#F25022" d="M1 1h10v10H1z"/><path fill="#00A4EF" d="M13 1h10v10H13z"/><path fill="#7FBA00" d="M1 13h10v10H1z"/><path fill="#FFB900" d="M13 13h10v10H13z"/></svg>
+            Microsoft
+          </button>
+        </div>
+        <p class="auth-switch">Already have an account? <a href="#" onclick="toggleAuth(event,'signin')">Sign In</a></p>
+      </div>
+      <!-- SIGN IN FORM -->
+      <div id="signin-form" class="auth-form" style="display:none">
+        <h1>Welcome Back</h1>
+        <p class="auth-subtitle">Sign in to your CULT account.</p>
+        <div class="form-group">
+          <label>Email Address</label>
+          <input type="email" id="signin-email" value="amaresh@cult.io"/>
+        </div>
+        <div class="form-group">
+          <label>Password</label>
+          <input type="password" id="signin-password" value="password123"/>
+          <div style="text-align:right;margin-top:6px"><a href="#" style="font-size:12px;color:var(--orange)">Forgot password?</a></div>
+        </div>
+        <button class="btn-primary btn-full" onclick="handleSignin()">Sign In</button>
+        <div class="auth-divider"><span>Or sign in with</span></div>
+        <div class="social-row">
+          <button class="btn-social" onclick="showToast('Google sign-in coming soon!')">
+            <svg width="17" height="17" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+            Google
+          </button>
+          <button class="btn-social" onclick="showToast('Microsoft sign-in coming soon!')">
+            <svg width="17" height="17" viewBox="0 0 24 24"><path fill="#F25022" d="M1 1h10v10H1z"/><path fill="#00A4EF" d="M13 1h10v10H13z"/><path fill="#7FBA00" d="M1 13h10v10H1z"/><path fill="#FFB900" d="M13 13h10v10H13z"/></svg>
+            Microsoft
+          </button>
+        </div>
+        <p class="auth-switch">Don't have an account? <a href="#" onclick="toggleAuth(event,'signup')">Sign Up</a></p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════ APP SCREEN ═══════ -->
+<div id="app-screen" style="display:none">
+  <div class="app-layout">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-top">
+        <div class="sidebar-brand">
+          <div class="brand-icon sm">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><rect x="2" y="5" width="20" height="14" rx="2" stroke="white" stroke-width="2.5"/><path d="M2 10h20" stroke="white" stroke-width="2.5"/></svg>
+          </div>
+          <span>CULT</span>
+        </div>
+        <div class="sidebar-user">
+          <div class="user-ava" id="user-ava">AN</div>
+          <div class="user-info">
+            <div class="user-name" id="user-display-name">Amaresh Nookala</div>
+            <div class="user-role">Admin</div>
+          </div>
+        </div>
+        <nav class="sidebar-nav">
+          <a class="nav-item active" data-page="dashboard" onclick="navigate('dashboard',this)">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>
+            <span>Dashboard</span>
+          </a>
+          <a class="nav-item" data-page="budgets" onclick="navigate('budgets',this)">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><path d="M1 10h22"/></svg>
+            <span>Budgets</span>
+          </a>
+          <a class="nav-item" data-page="transactions" onclick="navigate('transactions',this)">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+            <span>Transactions</span>
+          </a>
+          <a class="nav-item" data-page="categories" onclick="navigate('categories',this)">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z"/><circle cx="7" cy="7" r="1.5" fill="currentColor"/></svg>
+            <span>Categories</span>
+          </a>
+          <a class="nav-item" data-page="reports" onclick="navigate('reports',this)">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+            <span>Reports</span>
+          </a>
+          <a class="nav-item" data-page="settings" onclick="navigate('settings',this)">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+            <span>Settings</span>
+          </a>
+        </nav>
+      </div>
+      <button class="logout-btn" onclick="logout()">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        <span>Logout</span>
+      </button>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content">
+
+      <!-- ── DASHBOARD ── -->
+      <div id="page-dashboard" class="page active">
+        <div class="page-inner">
+          <div class="page-col-main">
+            <div class="page-header">
+              <h2 class="page-title">Overview</h2>
+              <div class="hdr-actions">
+                <button class="icon-btn"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></button>
+                <button class="icon-btn" onclick="showToast('No new notifications')"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg></button>
+              </div>
+            </div>
+            <div class="stats-grid">
+              <div class="stat-card peach">
+                <div class="stat-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#E8500C" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><path d="M1 10h22"/></svg></div>
+                <div class="stat-label">Total Budget</div>
+                <div class="stat-value">$150,000</div>
+                <div class="stat-change positive">↑ 4.2% from last month</div>
+              </div>
+              <div class="stat-card blue-card">
+                <div class="stat-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#4B6EF5" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 001.99 1.61h9.72a2 2 0 001.99-1.61L23 6H6"/></svg></div>
+                <div class="stat-label">Total Expenses</div>
+                <div class="stat-value">$112,450</div>
+                <div class="stat-change negative">↑ 12% over limit</div>
+              </div>
+              <div class="stat-card green-card">
+                <div class="stat-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#22C55E" stroke-width="2"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></div>
+                <div class="stat-label">Remaining Balance</div>
+                <div class="stat-value">$37,550</div>
+                <div class="stat-change positive">✓ On track this month</div>
+              </div>
+            </div>
+            <div class="chart-card">
+              <div class="chart-header">
+                <div><h3>Expense Trends</h3><p>Monthly overview of spending habits</p></div>
+                <div style="display:flex;gap:8px">
+                  <button class="icon-btn sm" onclick="showToast('Exported as CSV')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></button>
+                  <button class="icon-btn sm" onclick="showToast('Exported as image')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></button>
+                </div>
+              </div>
+              <canvas id="trendChart" height="160"></canvas>
+            </div>
+            <div class="chart-card">
+              <div class="chart-header">
+                <div><h3>Weekly Expenses</h3><p>Breakdown by days of the week</p></div>
+              </div>
+              <canvas id="weeklyChart" height="140"></canvas>
+            </div>
+          </div>
+          <div class="page-col-right">
+            <h3 class="panel-title">Insights</h3>
+            <div class="insight-card">
+              <div class="ins-row">
+                <span class="ins-title">Budget Spent</span>
+                <span class="badge orange-badge">🔥 PREDICTIVE BURN ACTIVE</span>
+              </div>
+              <div class="donut-wrap">
+                <canvas id="donutChart" width="160" height="160"></canvas>
+                <div class="donut-label">
+                  <span class="donut-pct">75%</span>
+                  <span class="donut-sub">Spent so far</span>
+                </div>
+              </div>
+              <div class="ins-footer-row">
+                <span>Remaining Days</span>
+                <strong>12 Days</strong>
+              </div>
+              <div class="thin-progress">
+                <div class="thin-fill" style="width:40%"></div>
+              </div>
+            </div>
+            <div class="quick-actions-panel">
+              <h4>Quick Actions</h4>
+              <div class="qa-grid">
+                <button class="qa-btn" onclick="navigate('transactions',null)">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--orange)" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><path d="M1 10h22"/><line x1="12" y1="14" x2="12" y2="18"/><line x1="10" y1="16" x2="14" y2="16"/></svg>
+                  <span>Add Bill</span>
+                </button>
+                <button class="qa-btn" onclick="showToast('Recurring transactions coming soon!')">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--orange)" stroke-width="2"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 014-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 01-4 4H3"/></svg>
+                  <span>Recurring</span>
+                </button>
+                <button class="qa-btn" onclick="navigate('budgets',null)">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--orange)" stroke-width="2"><polyline points="16 3 21 3 21 8"/><line x1="4" y1="20" x2="21" y2="3"/><polyline points="21 16 21 21 16 21"/><line x1="15" y1="15" x2="21" y2="21"/></svg>
+                  <span>Transfer</span>
+                </button>
+                <button class="qa-btn" onclick="exportData()">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--orange)" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                  <span>Export</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── BUDGETS ── -->
+      <div id="page-budgets" class="page">
+        <div class="page-inner">
+          <div class="page-col-main">
+            <div class="page-header">
+              <h2 class="page-title">Budget Allocation</h2>
+              <div class="hdr-actions">
+                <button class="icon-btn"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></button>
+              </div>
+            </div>
+            <p class="page-subtitle">Distribute your total monthly budget across key business sectors using the sliders below.</p>
+            <div class="budget-sliders">
+              <div class="budget-slider-item">
+                <div class="bsi-header">
+                  <div class="bsi-label">
+                    <div class="bsi-icon bsi-blue"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="8" rx="2"/><rect x="2" y="14" width="20" height="8" rx="2"/></svg></div>
+                    <span>Inventory</span>
+                  </div>
+                  <span class="bsi-pct" id="inv-pct">50%</span>
+                </div>
+                <input type="range" class="budget-range" id="inv-range" min="0" max="100" value="50" oninput="updateBudget('inv',this.value,4000000)"/>
+                <div class="bsi-meta"><span>$0</span><span id="inv-target">$2,000,000 TARGET</span></div>
+              </div>
+              <div class="budget-slider-item">
+                <div class="bsi-header">
+                  <div class="bsi-label">
+                    <div class="bsi-icon bsi-green"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg></div>
+                    <span>Salaries</span>
+                  </div>
+                  <span class="bsi-pct" id="sal-pct">30%</span>
+                </div>
+                <input type="range" class="budget-range" id="sal-range" min="0" max="100" value="30" oninput="updateBudget('sal',this.value,2400000)"/>
+                <div class="bsi-meta"><span>$0</span><span id="sal-target">$720,000 TARGET</span></div>
+              </div>
+              <div class="budget-slider-item">
+                <div class="bsi-header">
+                  <div class="bsi-label">
+                    <div class="bsi-icon bsi-orange"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><circle cx="19" cy="7" r="4"/></svg></div>
+                    <span>Operations</span>
+                  </div>
+                  <span class="bsi-pct" id="ops-pct">20%</span>
+                </div>
+                <input type="range" class="budget-range" id="ops-range" min="0" max="100" value="20" oninput="updateBudget('ops',this.value,1600000)"/>
+                <div class="bsi-meta"><span>$0</span><span id="ops-target">$320,000 TARGET</span></div>
+              </div>
+            </div>
+            <div class="alloc-notice" id="alloc-notice">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--orange)" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+              <span id="alloc-msg">Total allocation must equal <strong>100%</strong>. Your current distribution is optimal.</span>
+            </div>
+          </div>
+          <div class="page-col-right">
+            <div class="add-expense-panel">
+              <div class="aep-header">
+                <h3>Add Expense</h3>
+                <span class="badge smart-badge">SMART ENTRY</span>
+              </div>
+              <div class="quick-templates">
+                <div class="micro-label">QUICK TEMPLATES</div>
+                <div class="tmpl-chips" id="tmpl-chips">
+                  <button class="tmpl-chip active" onclick="applyTemplate(this,'Coffee',5.50,'Operations')">☕ Coffee</button>
+                  <button class="tmpl-chip" onclick="applyTemplate(this,'Uber',25,'Operations')">🚗 Uber</button>
+                  <button class="tmpl-chip" onclick="applyTemplate(this,'Internet',99,'Operations')">📶 Internet</button>
+                  <button class="tmpl-chip add-chip" onclick="addNewTemplate()">+ Add New</button>
+                </div>
+              </div>
+              <div class="receipt-section">
+                <div class="micro-label">SCAN RECEIPT</div>
+                <div class="receipt-drop" onclick="document.getElementById('rcpt-file').click()">
+                  <input type="file" id="rcpt-file" accept="image/*" style="display:none" onchange="handleReceiptUpload(this)"/>
+                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--orange)" stroke-width="1.5"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0018 9h-1.26A8 8 0 103 16.3"/></svg>
+                  <span class="rcpt-filename" id="rcpt-filename">receipt_7721.jpg</span>
+                  <span class="rcpt-accuracy">98% Auto-detection Accuracy</span>
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="micro-label">ASSIGN CATEGORY</label>
+                <select id="exp-cat" class="form-select">
+                  <option>Inventory</option><option>Salaries</option>
+                  <option selected>Operations</option><option>Marketing</option><option>Shipping</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="micro-label">AMOUNT</label>
+                <div class="amount-input-wrap">
+                  <span class="amt-symbol">$</span>
+                  <input type="number" id="exp-amount" value="99240" placeholder="0.00"/>
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="micro-label">TRANSACTION DATE</label>
+                <div class="date-input-wrap">
+                  <input type="date" id="exp-date" value="2023-10-24"/>
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                </div>
+              </div>
+              <button class="btn-confirm-dark" onclick="addExpense()">Confirm &amp; Add Entry</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── TRANSACTIONS ── -->
+      <div id="page-transactions" class="page">
+        <div class="page-inner">
+          <div class="page-col-main">
+            <div class="page-header">
+              <h2 class="page-title">Transactions</h2>
+              <div class="search-wrap">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                <input type="text" id="tx-search" placeholder="Search transactions..." oninput="filterTransactions()"/>
+              </div>
+            </div>
+            <div class="bulk-toolbar" id="bulk-toolbar" style="display:none">
+              <button class="bulk-btn" onclick="bulkChangeCategory()">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z"/></svg>
+                Change Category
+              </button>
+              <button class="bulk-btn" onclick="showToast('Date adjustment coming soon!')">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                Adjust Date
+              </button>
+              <button class="bulk-btn danger-btn" onclick="safeDeleteSelected()">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/></svg>
+                Safe Delete
+              </button>
+              <span class="selected-count" id="selected-count"></span>
+            </div>
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th><input type="checkbox" id="select-all" onchange="selectAllTx(this)"/></th>
+                  <th>DATE</th>
+                  <th>DESCRIPTION</th>
+                  <th>CATEGORY</th>
+                  <th>AMOUNT</th>
+                </tr>
+              </thead>
+              <tbody id="tx-tbody"></tbody>
+            </table>
+          </div>
+          <div class="page-col-right">
+            <h3 class="panel-title">Transaction Stats</h3>
+            <div class="stat-info-card">
+              <div class="micro-label">TOTAL TRANSACTIONS</div>
+              <div class="big-number" id="tx-count">1,284</div>
+              <div class="stat-change positive">↑ +12% from last month</div>
+            </div>
+            <div class="stat-info-card">
+              <div class="micro-label">PENDING REVIEWS</div>
+              <div class="big-number orange-num">24</div>
+              <div class="stat-change" style="color:#9CA3AF">Requires manual verification</div>
+            </div>
+            <div class="recent-activity">
+              <div class="micro-label" style="margin-bottom:14px">RECENT ACTIVITY</div>
+              <div class="activity-list" id="activity-list">
+                <div class="act-item">
+                  <div class="act-dot edit-dot">✏️</div>
+                  <div><div class="act-title">Software cost updated</div><div class="act-time">2 mins ago</div></div>
+                </div>
+                <div class="act-item">
+                  <div class="act-dot del-dot">🗑️</div>
+                  <div><div class="act-title">Removed "Old Receipt"</div><div class="act-time">1 hour ago</div></div>
+                </div>
+                <div class="act-item">
+                  <div class="act-dot imp-dot">📥</div>
+                  <div><div class="act-title">Batch import completed</div><div class="act-time">4 hours ago</div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── CATEGORIES ── -->
+      <div id="page-categories" class="page">
+        <div class="page-inner">
+          <div class="page-col-main">
+            <div class="page-header">
+              <div>
+                <h2 class="page-title">Categories</h2>
+                <p class="page-subtitle" style="margin-bottom:0">Manage your expense categories and tracking.</p>
+              </div>
+              <button class="btn-primary" onclick="openCatModal()">+ New Category</button>
+            </div>
+            <div class="cat-grid" id="cat-grid"></div>
+          </div>
+          <div class="page-col-right">
+            <h3 class="panel-title">Category Insights</h3>
+            <div class="ci-card">
+              <div class="micro-label">MOST ACTIVE CATEGORY</div>
+              <div class="ci-row">
+                <div class="ci-icon ci-blue">📦</div>
+                <div>
+                  <div class="ci-name">Inventory</div>
+                  <div class="stat-change positive">+15% this month</div>
+                </div>
+              </div>
+              <div class="prog-track blue-track"><div style="width:70%"></div></div>
+            </div>
+            <div class="ci-card">
+              <div class="micro-label">HIGHEST SPEND</div>
+              <div class="ci-row">
+                <div class="ci-icon ci-green">💰</div>
+                <div>
+                  <div class="ci-name">Salaries</div>
+                  <div style="font-size:12px;color:#9CA3AF">42% of budget</div>
+                </div>
+              </div>
+              <div class="prog-track orange-track"><div style="width:42%"></div></div>
+            </div>
+            <div class="cat-summary-box">
+              <div class="cs-row"><span>Total Categories</span><strong id="cat-count-label">5 Active</strong></div>
+              <div class="cs-row"><span>Monthly Trends</span><strong class="positive">↑ 8.2%</strong></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── REPORTS ── -->
+      <div id="page-reports" class="page">
+        <div class="page-inner">
+          <div class="page-col-main">
+            <div class="page-header">
+              <div>
+                <h2 class="page-title">Reports &amp; Transactions</h2>
+                <p class="page-subtitle" style="margin-bottom:0">Manage and audit your recent expense data</p>
+              </div>
+            </div>
+            <div class="bulk-toolbar" style="display:flex">
+              <button class="bulk-btn" onclick="showToast('Category changed!')">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z"/></svg>
+                Change Category
+              </button>
+              <button class="bulk-btn" onclick="showToast('Date adjusted!')">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                Adjust Date
+              </button>
+              <button class="bulk-btn danger-btn" onclick="reportSafeDelete()">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/></svg>
+                Safe Delete
+              </button>
+            </div>
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th><input type="checkbox" onchange="selectAllReports(this)"/></th>
+                  <th>DATE</th><th>TEMPLATE</th><th>CATEGORY</th><th>AMOUNT</th>
+                </tr>
+              </thead>
+              <tbody id="rpt-tbody"></tbody>
+            </table>
+          </div>
+          <div class="page-col-right">
+            <h3 class="panel-title">Expense Insights</h3>
+            <div class="stat-info-card">
+              <div class="micro-label">THIS MONTH</div>
+              <div class="big-number" style="font-size:22px;letter-spacing:-0.5px">$12,450.00</div>
+              <div class="stat-change positive">↑ 12% increase from last month</div>
+            </div>
+            <div style="margin:18px 0 10px"><div class="micro-label">TOP CATEGORIES</div></div>
+            <div class="top-cat-row"><span>Infrastructure</span><span>45%</span></div>
+            <div class="prog-track orange-track" style="margin-top:4px"><div style="width:45%"></div></div>
+            <div class="top-cat-row" style="margin-top:12px"><span>Operations</span><span>22%</span></div>
+            <div class="prog-track purple-track" style="margin-top:4px"><div style="width:22%"></div></div>
+            <div class="budget-alert-box">
+              <div class="bal-header">
+                <span>💡</span>
+                <span class="badge purple-badge">BUDGET ALERT</span>
+              </div>
+              <p>Infrastructure spending is 15% higher than projected for this cycle.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── SETTINGS ── -->
+      <div id="page-settings" class="page">
+        <div class="settings-layout">
+          <div class="settings-nav">
+            <div class="micro-label" style="padding:0 12px;margin-bottom:8px">ACCOUNT</div>
+            <button class="stg-tab active" onclick="switchSettingsTab(this,'profile')">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+              Profile
+            </button>
+            <button class="stg-tab" onclick="switchSettingsTab(this,'preferences')">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="18" x2="20" y2="18"/></svg>
+              Preferences
+            </button>
+            <button class="stg-tab" onclick="switchSettingsTab(this,'notifications')">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
+              Notifications
+            </button>
+            <button class="stg-tab" onclick="switchSettingsTab(this,'security')">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+              Security
+            </button>
+            <div class="micro-label" style="padding:0 12px;margin:16px 0 8px">SYSTEM</div>
+            <button class="stg-tab" onclick="switchSettingsTab(this,'appearance')">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/></svg>
+              Appearance
+            </button>
+            <button class="stg-tab danger-tab" onclick="switchSettingsTab(this,'danger')">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+              Danger Zone
+            </button>
+          </div>
+          <div class="settings-body">
+            <!-- Profile -->
+            <div id="stg-panel-profile" class="stg-panel active">
+              <h3>Profile Settings</h3>
+              <div class="avatar-section">
+                <div class="profile-avatar" id="profile-ava">AN</div>
+                <div>
+                  <button class="btn-outline-sm" onclick="showToast('Photo upload coming soon!')">Change Photo</button>
+                  <p class="hint-text">JPG, PNG or GIF. Max 2MB.</p>
+                </div>
+              </div>
+              <div class="stg-form-grid">
+                <div class="form-group"><label>Full Name</label><input type="text" id="prf-name" value="Amaresh Nookala"/></div>
+                <div class="form-group"><label>Email Address</label><input type="email" id="prf-email" value="amaresh@cult.io"/></div>
+                <div class="form-group"><label>Job Title</label><input type="text" value="Admin"/></div>
+                <div class="form-group"><label>Company</label><input type="text" value="CULT Inc."/></div>
+                <div class="form-group"><label>Phone</label><input type="tel" placeholder="+1 (555) 000-0000"/></div>
+                <div class="form-group"><label>Timezone</label>
+                  <select class="form-select"><option>UTC+5:30 (IST)</option><option>UTC-5 (EST)</option><option>UTC+0 (GMT)</option><option>UTC+8 (CST)</option></select>
+                </div>
+              </div>
+              <button class="btn-primary" onclick="saveProfile()">Save Changes</button>
+            </div>
+            <!-- Preferences -->
+            <div id="stg-panel-preferences" class="stg-panel">
+              <h3>Preferences</h3>
+              <div class="stg-form-grid">
+                <div class="form-group"><label>Currency</label>
+                  <select class="form-select"><option selected>USD ($)</option><option>EUR (€)</option><option>INR (₹)</option><option>GBP (£)</option></select>
+                </div>
+                <div class="form-group"><label>Language</label>
+                  <select class="form-select"><option selected>English</option><option>Spanish</option><option>French</option><option>German</option></select>
+                </div>
+                <div class="form-group"><label>Date Format</label>
+                  <select class="form-select"><option selected>MM/DD/YYYY</option><option>DD/MM/YYYY</option><option>YYYY-MM-DD</option></select>
+                </div>
+                <div class="form-group"><label>Fiscal Year Start</label>
+                  <select class="form-select"><option>January</option><option>April</option><option selected>October</option></select>
+                </div>
+                <div class="form-group"><label>Default View</label>
+                  <select class="form-select"><option selected>Dashboard</option><option>Transactions</option><option>Reports</option></select>
+                </div>
+                <div class="form-group"><label>Number Format</label>
+                  <select class="form-select"><option selected>1,000.00</option><option>1.000,00</option></select>
+                </div>
+              </div>
+              <button class="btn-primary" onclick="showToast('Preferences saved!')">Save Preferences</button>
+            </div>
+            <!-- Notifications -->
+            <div id="stg-panel-notifications" class="stg-panel">
+              <h3>Notification Settings</h3>
+              <div class="toggle-list">
+                <div class="toggle-item">
+                  <div><div class="tgl-title">Email Alerts</div><div class="tgl-desc">Receive email notifications for important events</div></div>
+                  <label class="toggle-switch"><input type="checkbox" checked onchange="showToast('Email alerts updated')"/><span class="toggle-track"></span></label>
+                </div>
+                <div class="toggle-item">
+                  <div><div class="tgl-title">Budget Warnings</div><div class="tgl-desc">Alert when spending exceeds budget thresholds</div></div>
+                  <label class="toggle-switch"><input type="checkbox" checked onchange="showToast('Budget warnings updated')"/><span class="toggle-track"></span></label>
+                </div>
+                <div class="toggle-item">
+                  <div><div class="tgl-title">Weekly Reports</div><div class="tgl-desc">Summary of weekly transactions every Monday</div></div>
+                  <label class="toggle-switch"><input type="checkbox" onchange="showToast('Weekly reports updated')"/><span class="toggle-track"></span></label>
+                </div>
+                <div class="toggle-item">
+                  <div><div class="tgl-title">Transaction Confirmations</div><div class="tgl-desc">Notify on every new expense entry added</div></div>
+                  <label class="toggle-switch"><input type="checkbox" checked onchange="showToast('Notifications updated')"/><span class="toggle-track"></span></label>
+                </div>
+                <div class="toggle-item">
+                  <div><div class="tgl-title">Monthly Summary</div><div class="tgl-desc">End-of-month financial summary via email</div></div>
+                  <label class="toggle-switch"><input type="checkbox" onchange="showToast('Monthly summary updated')"/><span class="toggle-track"></span></label>
+                </div>
+              </div>
+            </div>
+            <!-- Security -->
+            <div id="stg-panel-security" class="stg-panel">
+              <h3>Security Settings</h3>
+              <div class="stg-form-grid">
+                <div class="form-group"><label>Current Password</label><input type="password" placeholder="••••••••"/></div>
+                <div class="form-group"><label>New Password</label>
+                  <input type="password" id="new-pass" placeholder="••••••••" oninput="checkNewPassStrength(this.value)"/>
+                  <div class="pass-strength-bars" style="margin-top:8px">
+                    <div class="s-bar" id="np1"></div><div class="s-bar" id="np2"></div>
+                    <div class="s-bar" id="np3"></div><div class="s-bar" id="np4"></div>
+                  </div>
+                </div>
+                <div class="form-group"><label>Confirm New Password</label><input type="password" placeholder="••••••••"/></div>
+              </div>
+              <button class="btn-primary" onclick="showToast('Password updated successfully!')">Update Password</button>
+              <div class="section-divider"></div>
+              <div class="toggle-list">
+                <div class="toggle-item">
+                  <div><div class="tgl-title">Two-Factor Authentication</div><div class="tgl-desc">Add an extra layer of security with 2FA</div></div>
+                  <label class="toggle-switch"><input type="checkbox" onchange="showToast('2FA settings changed')"/><span class="toggle-track"></span></label>
+                </div>
+                <div class="toggle-item">
+                  <div><div class="tgl-title">Session Timeout</div><div class="tgl-desc">Auto logout after 30 minutes of inactivity</div></div>
+                  <label class="toggle-switch"><input type="checkbox" checked onchange="showToast('Session timeout updated')"/><span class="toggle-track"></span></label>
+                </div>
+              </div>
+            </div>
+            <!-- Appearance -->
+            <div id="stg-panel-appearance" class="stg-panel">
+              <h3>Appearance</h3>
+              <div class="form-group">
+                <label>Theme</label>
+                <div class="theme-options">
+                  <div class="theme-opt selected" onclick="setTheme('light',this)">
+                    <div class="theme-preview light-preview"></div>
+                    <span>Light</span>
+                  </div>
+                  <div class="theme-opt" onclick="setTheme('dark',this)">
+                    <div class="theme-preview dark-preview"></div>
+                    <span>Dark</span>
+                  </div>
+                </div>
+              </div>
+              <div class="form-group" style="margin-top:20px">
+                <label>Accent Color</label>
+                <div class="color-swatches">
+                  <div class="swatch active-swatch" style="background:#E8500C" onclick="setAccent('#E8500C',this)" title="Orange"></div>
+                  <div class="swatch" style="background:#4B6EF5" onclick="setAccent('#4B6EF5',this)" title="Blue"></div>
+                  <div class="swatch" style="background:#22C55E" onclick="setAccent('#22C55E',this)" title="Green"></div>
+                  <div class="swatch" style="background:#8B5CF6" onclick="setAccent('#8B5CF6',this)" title="Purple"></div>
+                  <div class="swatch" style="background:#EC4899" onclick="setAccent('#EC4899',this)" title="Pink"></div>
+                  <div class="swatch" style="background:#F59E0B" onclick="setAccent('#F59E0B',this)" title="Amber"></div>
+                </div>
+              </div>
+              <div class="form-group" style="margin-top:20px">
+                <label>Font Size</label>
+                <select class="form-select" onchange="showToast('Font size updated!')">
+                  <option>Small (13px)</option><option selected>Medium (15px)</option><option>Large (17px)</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Sidebar Width &nbsp;<span id="sw-val" style="color:var(--orange)">240px</span></label>
+                <input type="range" min="200" max="320" value="240" style="width:100%;margin-top:8px" oninput="adjustSidebar(this.value)"/>
+              </div>
+            </div>
+            <!-- Danger Zone -->
+            <div id="stg-panel-danger" class="stg-panel">
+              <h3>Danger Zone</h3>
+              <div class="danger-item">
+                <div>
+                  <div class="danger-title">Export All Data</div>
+                  <div class="danger-desc">Download all your transactions and budget data as CSV.</div>
+                </div>
+                <button class="btn-outline" onclick="exportData()">Export Data</button>
+              </div>
+              <div class="danger-item">
+                <div>
+                  <div class="danger-title">Reset Budget Allocations</div>
+                  <div class="danger-desc">Reset all budget sliders to their default values.</div>
+                </div>
+                <button class="btn-outline" onclick="resetBudgets()">Reset Budgets</button>
+              </div>
+              <div class="danger-item danger-red-item">
+                <div>
+                  <div class="danger-title" style="color:#EF4444">Delete Account</div>
+                  <div class="danger-desc">Permanently delete your account. This cannot be undone.</div>
+                </div>
+                <button class="btn-danger-red" onclick="confirmDeleteAccount()">Delete Account</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <!-- Toast Notification -->
+  <div id="toast" class="toast"></div>
+  <!-- Undo Bar -->
+  <div id="undo-bar" class="undo-bar" style="display:none">
+    <div style="display:flex;align-items:center;gap:10px">
+      <span style="color:#EF4444;font-size:16px">✕</span>
+      <span id="undo-msg">Expense Deleted</span>
+    </div>
+    <button onclick="undoLastAction()">Undo <kbd>Ctrl+Z</kbd></button>
+  </div>
+  <!-- FAB -->
+  <button class="fab-btn" id="fab-btn" onclick="fabAction()">+</button>
+  <!-- Category Modal -->
+  <div id="cat-modal" class="modal-overlay" style="display:none" onclick="closeCatModal(event)">
+    <div class="modal-box">
+      <h3>New Category</h3>
+      <div class="form-group"><label>Category Name</label><input type="text" id="new-cat-name" placeholder="e.g. Travel"/></div>
+      <div class="form-group"><label>Icon (emoji)</label><input type="text" id="new-cat-icon" placeholder="✈️" maxlength="2"/></div>
+      <div style="display:flex;gap:10px;margin-top:20px">
+        <button class="btn-outline" style="flex:1" onclick="closeCatModal()">Cancel</button>
+        <button class="btn-primary" style="flex:1" onclick="saveNewCategory()">Add Category</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
